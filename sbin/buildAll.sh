@@ -3,7 +3,8 @@ set -eo pipefail
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 echo "====Building Producer JARs===="
-$DIR/../CitibikeApiProducer/gradlew -p $DIR/../CitibikeApiProducer clean test bootJar
+cd $DIR/../CitibikeApiProducer
+./gradlew clean test bootJar
 
 echo "====Building Consumer JARs===="
 cd $DIR/../RawDataSaver
