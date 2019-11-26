@@ -22,8 +22,6 @@ Host bastion.twdu-2a.training
         StrictHostKeyChecking no
 " >> ~/.ssh/config
 
-echo "" > ~/.ssh/known_hosts
-
 echo "====SSH Config Updated===="
 
 echo "====Insert app config in zookeeper===="
