@@ -17,7 +17,7 @@ Host emr-master.twdu-2a.training
 
 Host *.twdu-2a.training
 	ForwardAgent yes
-	ProxyCommand ssh 18.138.126.200 -W %h:%p 2>/dev/null
+	ProxyCommand ssh ec2-user@ec2-18-139-6-183.ap-southeast-1.compute.amazonaws.com -W %h:%p 2>/dev/null
 	User ec2-user
     StrictHostKeyChecking no
 " >> ~/.ssh/config
