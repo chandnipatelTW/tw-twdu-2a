@@ -22,3 +22,7 @@ lazy val root = (project in file(".")).
       "org.apache.spark" %% "spark-streaming-kafka-0-10" % sparkVersion
     )
   )
+
+lazy val excludeJpountz = ExclusionRule(organization = "net.jpountz.lz4", name = "lz4")
+
+lazy val kafkaClients = "org.apache.kafka" % "kafka-clients" % "0.10.0.1" excludeAll(excludeJpountz)
