@@ -71,13 +71,14 @@ function kill_process {
 station_information="station-information"
 station_status="station-status"
 station_san_francisco="station-san-francisco"
-
+station_marseille="station-marseille"
 
 echo "====Kill running producers===="
 
 kill_process ${station_information}
 kill_process ${station_status}
 kill_process ${station_san_francisco}
+kill_process ${station_marseille}
 
 echo "====Runing Producers Killed===="
 
@@ -86,6 +87,7 @@ echo "====Deploy Producers===="
 nohup java -jar /tmp/free2wheelers-citibike-apis-producer0.1.0.jar --spring.profiles.active=${station_information} --kafka.brokers=kafka.twdu-2a.training:9092 1>/tmp/${station_information}.log 2>/tmp/${station_information}.error.log &
 nohup java -jar /tmp/free2wheelers-citibike-apis-producer0.1.0.jar --spring.profiles.active=${station_san_francisco} --producer.topic=station_data_sf --kafka.brokers=kafka.twdu-2a.training:9092 1>/tmp/${station_san_francisco}.log 2>/tmp/${station_san_francisco}.error.log &
 nohup java -jar /tmp/free2wheelers-citibike-apis-producer0.1.0.jar --spring.profiles.active=${station_status} --kafka.brokers=kafka.twdu-2a.training:9092 1>/tmp/${station_status}.log 2>/tmp/${station_status}.error.log &
+nohup java -jar /tmp/free2wheelers-citibike-apis-producer0.1.0.jar --spring.profiles.active=${station_marseille} --kafka.brokers=kafka.twdu-2a.training:9092 1>/tmp/${station_marseille}.log 2>/tmp/${station_marseille}.error.log &
 
 echo "====Producers Deployed===="
 '
