@@ -1,0 +1,19 @@
+{
+  "name": "e2e_tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node src/mock_server/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "npm": ">6.12.1",
+    "node": ">=12.13.1"
+  },
+  "devDependencies": {
+    "mountebank": "^2.1.2",
+    "node-fetch": "^2.6.0"
+  }
+}
