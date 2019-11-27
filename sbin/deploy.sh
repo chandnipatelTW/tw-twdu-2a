@@ -15,11 +15,16 @@ echo "
 Host emr-master.twdu-2a.training
     User hadoop
 
-Host *.twdu-2a.training
-	ForwardAgent yes
-	ProxyCommand ssh ec2-user@ec2-18-139-6-183.ap-southeast-1.compute.amazonaws.com -W %h:%p 2>/dev/null
-	User ec2-user
-    StrictHostKeyChecking no
+Host *.twdu-2a.training !bastion.twdu-2a.training
+    User ec2-user
+    ForwardAgent yes
+    ProxyCommand ssh bastion.twdu-2a.training -W %h:%p 2>/dev/null
+
+Host bastion.twdu-2a.training
+    User ec2-user
+    HostName ec2-18-139-6-183.ap-southeast-1.compute.amazonaws.com
+    DynamicForward 6789
+
 " >> ~/.ssh/config
 
 echo "====SSH Config Updated===="
