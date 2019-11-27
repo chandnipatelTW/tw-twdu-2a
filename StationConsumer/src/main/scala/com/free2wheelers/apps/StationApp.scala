@@ -21,6 +21,7 @@ object StationApp {
 
     val nycStationTopic = new String(zkClient.getData.watched.forPath("/free2wheelers/stationDataNYC/topic"))
     val sfStationTopic = new String(zkClient.getData.watched.forPath("/free2wheelers/stationDataSF/topic"))
+    val marseilleStationTopic = new String(zkClient.getData.watched.forPath("/free2wheelers/stationDataMarseille/topic"))
 
     val checkpointLocation = new String(
       zkClient.getData.watched.forPath("/free2wheelers/output/checkpointLocation"))
@@ -52,8 +53,18 @@ object StationApp {
       .selectExpr("CAST(value AS STRING) as raw_payload")
       .transform(sfStationStatusJson2DF(_, spark))
 
+    val marseilleStationDF = spark.readStream
+      .format("kafka")
+      .option("kafka.bootstrap.servers", stationKafkaBrokers)
+      .option("subscribe", marseilleStationTopic)
+      .option("startingOffsets", "latest")
+      .load()
+      .selectExpr("CAST(value AS STRING) as raw_payload")
+      .transform(marseilleStationStatusJson2DF(_, spark))
+
     nycStationDF
       .union(sfStationDF)
+      .union(marseilleStationDF)
       .as[StationStatus]
       .groupByKey(r=>r.station_id)
       .reduceGroups((r1,r2)=>if (r1.last_updated > r2.last_updated) r1 else r2)
