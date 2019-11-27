@@ -78,7 +78,7 @@ echo "====Producers Deployed===="
 
 
 echo "====Configure HDFS paths===="
-scp ./hdfs/seed.sh emr-master.twdu-2a.training:/tmp/hdfs-seed.sh
+scp ./hdfs/seed.sh hadoop@emr-master.twdu-2a.training:/tmp/hdfs-seed.sh
 
 ssh emr-master.twdu-2a.training '
 set -e
@@ -91,10 +91,10 @@ echo "====HDFS paths configured==="
 
 
 echo "====Copy Raw Data Saver Jar to EMR===="
-scp RawDataSaver/target/scala-2.11/free2wheelers-raw-data-saver_2.11-0.0.1.jar emr-master.twdu-2a.training:/tmp/
+scp RawDataSaver/target/scala-2.11/free2wheelers-raw-data-saver_2.11-0.0.1.jar hadoop@emr-master.twdu-2a.training:/tmp/
 echo "====Raw Data Saver Jar Copied to EMR===="
 
-scp sbin/go.sh emr-master.twdu-2a.training:/tmp/go.sh
+scp sbin/go.sh hadoop@emr-master.twdu-2a.training:/tmp/go.sh
 
 ssh emr-master.twdu-2a.training '
 set -e
@@ -122,12 +122,12 @@ echo "====Raw Data Saver Deployed===="
 
 
 echo "====Copy Station Consumers Jar to EMR===="
-scp StationConsumer/target/scala-2.11/free2wheelers-station-consumer_2.11-0.0.1.jar emr-master.twdu-2a.training:/tmp/
+scp StationConsumer/target/scala-2.11/free2wheelers-station-consumer_2.11-0.0.1.jar hadoop@emr-master.twdu-2a.training:/tmp/
 
-scp StationTransformerNYC/target/scala-2.11/free2wheelers-station-transformer-nyc_2.11-0.0.1.jar emr-master.twdu-2a.training:/tmp/
+scp StationTransformerNYC/target/scala-2.11/free2wheelers-station-transformer-nyc_2.11-0.0.1.jar hadoop@emr-master.twdu-2a.training:/tmp/
 echo "====Station Consumers Jar Copied to EMR===="
 
-scp sbin/go.sh emr-master.twdu-2a.training:/tmp/go.sh
+scp sbin/go.sh hadoop@emr-master.twdu-2a.training:/tmp/go.sh
 
 ssh emr-master.twdu-2a.training '
 set -e
