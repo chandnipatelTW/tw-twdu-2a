@@ -6,14 +6,17 @@ echo "====Updating SSH Config===="
 
 
 echo "
+
+Host emr-master.twdu-2a.training
+    User hadoop
+
+Host !github.com *
 	User ec2-user
 	IdentitiesOnly yes
 	ForwardAgent yes
 	DynamicForward 6789
     StrictHostKeyChecking no
 
-Host emr-master.twdu-2a.training
-    User hadoop
 
 Host *.twdu-2a.training !bastion.twdu-2a.training
     User ec2-user
