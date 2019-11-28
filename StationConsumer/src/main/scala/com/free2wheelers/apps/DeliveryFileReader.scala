@@ -29,6 +29,6 @@ object DeliveryFileReader {
       .text(inputPath)
       .as[String]
       .collect()
-      .count()
+//      .count()
   }
 }
