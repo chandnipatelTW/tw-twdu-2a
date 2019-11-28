@@ -57,6 +57,7 @@ services:
         depends_on:
           - kafka
           - zookeeper-seed
+        command: ["java",  "-jar", "/app.jar", "--spring.profiles.active=test-station-san-francisco", "--spring.profiles.active=docker"]
         networks:
           - streaming-data-internal
 

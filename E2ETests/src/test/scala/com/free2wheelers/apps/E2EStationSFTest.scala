@@ -23,9 +23,9 @@ class E2EStationSFTest extends FeatureSpec with Matchers with GivenWhenThen {
     import spark.implicits._
 
     scenario("Transform SF station data frame") {
-      val outputLocation = new String(zkClient.getData.watched.forPath("/free2wheelers/output/dataLocation"))
+      Thread.sleep(60000)
 
-      println(outputLocation, "in e2e test ******")
+      val outputLocation = new String(zkClient.getData.watched.forPath("/free2wheelers/output/dataLocation"))
 
       val result = spark.read
         .option("header", "true")
