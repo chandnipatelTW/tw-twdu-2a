@@ -1,0 +1,67 @@
+{
+  "network": {
+    "company": [
+      "Motivate International, Inc."
+    ],
+    "gbfs_href": "https://gbfs.fordgobike.com/gbfs/gbfs.json",
+    "href": "/v2/networks/ford-gobike",
+    "id": "ford-gobike",
+    "location": {
+      "city": "San Francisco Bay Area, CA",
+      "country": "US",
+      "latitude": 37.7141454,
+      "longitude": -122.25
+    },
+    "name": "Bay Wheels",
+    "stations": [
+      {
+        "empty_slots": 3,
+        "extra": {
+          "address": "test data",
+          "last_updated": 1574899216,
+          "renting": 1,
+          "returning": 1,
+          "uid": "444"
+        },
+        "free_bikes": 16,
+        "id": "73f8aa6ec3250de2a02cc0763f5a19eb",
+        "latitude": 37.37111641335901,
+        "longitude": -121.88133180141449,
+        "name": "Mercado Way at Sierra Rd",
+        "timestamp": "2019-11-28T05:09:12.656000Z"
+      },
+      {
+        "empty_slots": 10,
+        "extra": {
+          "address": "test data 1",
+          "last_updated": 1574914002,
+          "renting": 1,
+          "returning": 1,
+          "uid": "492"
+        },
+        "free_bikes": 9,
+        "id": "7a10659bcb8e88d97a98531df0dcd2be",
+        "latitude": 37.79080303242391,
+        "longitude": -122.43259012699126,
+        "name": "Webster St at Clay St",
+        "timestamp": "2019-11-28T05:09:12.794000Z"
+      },
+      {
+        "empty_slots": 9,
+        "extra": {
+          "address": "test data 2",
+          "last_updated": 1574916371,
+          "renting": 1,
+          "returning": 1,
+          "uid": "493"
+        },
+        "free_bikes": 9,
+        "id": "6fde6bae495dbd16f6cacfe31de263c6",
+        "latitude": 37.77666378283064,
+        "longitude": -122.40790843963623,
+        "name": "Folsom St at 7th St",
+        "timestamp": "2019-11-28T05:09:12.796000Z"
+      }
+    ]
+  }
+}

@@ -1,0 +1,4 @@
+FROM ryandjf/docker-spark
+
+WORKDIR /app
+COPY . ./

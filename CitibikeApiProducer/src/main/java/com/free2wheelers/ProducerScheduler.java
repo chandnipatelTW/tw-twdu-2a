@@ -23,7 +23,6 @@ public class ProducerScheduler {
 
         RestTemplate template = new RestTemplate();
         HttpEntity<String> response = template.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, String.class);
-
         apiProducer.sendMessage(response);
     }
 }
