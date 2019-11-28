@@ -38,7 +38,7 @@ ssh kafka.twdu-2a.training '
 set -e
 export hdfs_server="emr-master.twdu-2a.training:8020"
 export kafka_server="kafka.twdu-2a.training:9092"
-export zk_command="zookeeper-shell localhost:2181"
+export zk_command="zookeeper-shell kafka.twdu-2a.training:2181"
 sh /tmp/zookeeper-seed.sh
 '
 echo "====Inserted app config in zookeeper===="
