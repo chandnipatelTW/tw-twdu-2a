@@ -1,6 +1,6 @@
 const mbHelper = require('./mountebankHelper');
 const settings = require('./settings');
-const sfData = require('../../data/citibikeSFData.json')
+const sfData = require('../../data/citibikeSFData.json');
 
 function addService() {
     const stubs = [
