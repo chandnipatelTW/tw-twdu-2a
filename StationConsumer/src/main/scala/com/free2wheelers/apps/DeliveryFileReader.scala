@@ -1,9 +1,7 @@
 package com.free2wheelers.apps
 
-import java.time.LocalDateTime
-
 import org.apache.log4j.{Level, LogManager, Logger}
-import org.apache.spark.sql.{SparkSession, DataFrame}
+import org.apache.spark.sql.{SparkSession}
 
 object DeliveryFileReader {
   val log: Logger = LogManager.getRootLogger
@@ -13,7 +11,7 @@ object DeliveryFileReader {
     val spark = SparkSession.builder.appName("DeliveryFileValidation - Kales/Katie").getOrCreate()
     log.info("Application Initialized: " + spark.sparkContext.appName)
 
-    val inputPath = "hdfs://free2wheelers/stationMart/data"
+    val inputPath = "hdfs://emr-master.twdu-2a.training:8020/free2wheelers/stationMart/data"
 
     run(spark, inputPath)
     log.info("Application Done: " + spark.sparkContext.appName)
@@ -24,11 +22,11 @@ object DeliveryFileReader {
     log.info("Reading text file from: " + inputPath)
 
     import spark.implicits._
-    spark
+    val duplicatesCount = spark
       .read
-      .text(inputPath)
-      .as[String]
-      .collect()
-//      .count()
+      .csv(inputPath)
+      .groupBy($"State").count.filter($"count">1).count()
+    log.info("Duplicates Count: " + duplicatesCount)
   }
+
 }
