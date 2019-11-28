@@ -75,6 +75,7 @@ object StationApp {
       .format("overwriteCSV")
       .option("header", true)
       .option("truncate", false)
+      .option("checkpointLocation", checkpointLocation)
       .option("path", outputLocation)
       .start()
       .awaitTermination()
