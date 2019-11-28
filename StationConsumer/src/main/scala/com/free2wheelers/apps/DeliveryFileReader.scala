@@ -24,7 +24,6 @@ object DeliveryFileReader {
     log.info("Reading text file from: " + inputPath)
 
     import spark.implicits._
-    import WordCountUtils._
     spark
       .read
       .text(inputPath)
