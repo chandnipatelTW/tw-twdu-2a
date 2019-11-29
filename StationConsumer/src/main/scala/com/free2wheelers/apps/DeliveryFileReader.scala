@@ -25,7 +25,7 @@ object DeliveryFileReader {
     val duplicatesCount = spark
       .read
       .csv(inputPath)
-      .groupBy($"State").count.filter($"count">1).count()
+      .groupBy($"station_id").count.filter($"count">1).count()
     log.info("Duplicates Count: " + duplicatesCount)
   }
 
