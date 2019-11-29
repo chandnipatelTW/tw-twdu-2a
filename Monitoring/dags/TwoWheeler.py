@@ -60,7 +60,7 @@ def is_delivery_file_updated(**context):
 
 
 def delivery_file_status(**context):
-    url = "http://emr-master.twdu-2a.training:50070/webhdfs/v1/user/hadoop/kaleeaswari/words.txt?op=GETFILESTATUS"
+    url = "http://emr-master.twdu-2a.training:50070/webhdfs/v1/free2wheelers/stationMart/data/_SUCCESS?op=GETFILESTATUS"
     headers = {
         'content-type': "application/json",
         'cache-control': "no-cache"
@@ -113,8 +113,7 @@ with DAG('TwoWheeler-Mart-Monitor',
 
     delivery_file_status >> is_delivery_file_updated >> push_metric >> unique_stations
 
-    all_stations_has_location = PythonOperator(task_id='all_stations_has_location',
-                                           python_callable=all_stations_has_location, provide_context=True)
+    # all_stations_has_location = PythonOperator(task_id='all_stations_has_location', python_callable=all_stations_has_location, provide_context=True)
 
 # push_metric >> unique_stations
 # push_metric >> all_stations_has_location
