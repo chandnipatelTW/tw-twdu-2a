@@ -1,9 +1,11 @@
 package com.free2wheelers.apps
 
-import com.free2wheelers.apps.StationStatusTransformation._
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.ExponentialBackoffRetry
 import org.apache.spark.sql.SparkSession
+
+import com.free2wheelers.apps.StationStatusTransformation._
+import StationUtils._
 
 object StationApp {
 
@@ -62,13 +64,16 @@ object StationApp {
       .selectExpr("CAST(value AS STRING) as raw_payload")
       .transform(marseilleStationStatusJson2DF(_, spark))
 
+    val dateFormat = "yyyy-MM-dd'T'hh:mm:ss"
+
     nycStationDF
       .union(sfStationDF)
       .union(marseilleStationDF)
       .as[StationStatus]
-      .groupByKey(r=>r.station_id)
-      .reduceGroups((r1,r2)=>if (r1.last_updated > r2.last_updated) r1 else r2)
+      .groupByKey(r => r.station_id)
+      .reduceGroups((r1, r2) => if (r1.last_updated > r2.last_updated) r1 else r2)
       .map(_._2)
+      .formatLastUpdatedDate(dateFormat, spark)
       .writeStream
       .partitionBy("last_updated")
       .outputMode("update")
