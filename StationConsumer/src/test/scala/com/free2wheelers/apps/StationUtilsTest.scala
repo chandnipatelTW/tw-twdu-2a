@@ -23,7 +23,7 @@ class StationUtilsTest extends FeatureSpec with Matchers with GivenWhenThen {
       val stationsWithFormattedDate = stations formatLastUpdatedDate(dateFormat, spark)
 
       Then("Last updated date is formatted to the given format")
-      val expected = Seq("2019-11-29T01:53:27", "2019-11-29T02:12:02").toDF().collect
+      val expected = Seq("2019-11-29T08:23:27", "2019-11-29T08:42:02").toDF().collect
 
       stationsWithFormattedDate.select($"last_updated").collect should contain theSameElementsAs expected
     }

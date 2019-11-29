@@ -1,14 +1,18 @@
 package com.free2wheelers.apps
 
 import org.apache.spark.sql.{Dataset, SparkSession}
-import org.apache.spark.sql.functions.{from_unixtime}
+import org.apache.spark.sql.functions.{from_unixtime, to_utc_timestamp, udf}
 
 object StationUtils {
 
   implicit class StringDataset(val stations: Dataset[StationStatus]) {
     def formatLastUpdatedDate(dateFormat: String, spark: SparkSession) = {
       import spark.implicits._
-      stations.withColumn("last_updated", from_unixtime($"last_updated", dateFormat))
+      val udfToDateUTC = udf((epochSeconds: Long) => {
+        val dateFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").withZone(java.time.ZoneId.of("UTC"))
+        dateFormatter.format(java.time.Instant.ofEpochSecond(epochSeconds))
+      })
+      stations.withColumn("last_updated", udfToDateUTC($"last_updated"))
     }
   }
 
