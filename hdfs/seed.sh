@@ -16,6 +16,7 @@ delete_hdfs_directory /free2wheelers/rawData/stationStatus/checkpoints
 delete_hdfs_directory /free2wheelers/rawData/stationDataSF/checkpoints
 delete_hdfs_directory /free2wheelers/rawData/stationDataMarseille/checkpoints
 delete_hdfs_directory /free2wheelers/rawData/stationDataNYC/checkpoints
+delete_hdfs_directory /free2wheelers/stationMart/checkpoints
 
 $hadoop_path fs -fs hdfs://$hdfs_server -mkdir -p /free2wheelers/rawData/stationInformation/checkpoints \
 && $hadoop_path fs -fs hdfs://$hdfs_server -mkdir -p /free2wheelers/rawData/stationInformation/data \
