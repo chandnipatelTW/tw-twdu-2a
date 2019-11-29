@@ -87,7 +87,6 @@ services:
         - hadoop
       volumes:
         - ~/.ivy2:/root/.ivy2:rw
-      command: ["sbt", "test"]
       networks:
         - streaming-data-internal
       restart: on-failure

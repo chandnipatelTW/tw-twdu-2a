@@ -2,3 +2,4 @@ FROM ryandjf/docker-spark
 
 WORKDIR /app
 COPY . ./
+CMD tail -f /dev/null
