@@ -8,6 +8,7 @@ import org.scalatest._
 class E2EStationSFTest extends FeatureSpec with Matchers with GivenWhenThen {
 
   feature("End to end test for SF station data") {
+    Thread.sleep(15000)
 
     val spark = SparkSession.builder
       .appName("E2E Test")
@@ -46,7 +47,7 @@ class E2EStationSFTest extends FeatureSpec with Matchers with GivenWhenThen {
       result.schema.fields(3).name should be("is_returning")
       result.schema.fields(3).dataType.typeName should be("boolean")
       result.schema.fields(4).name should be("last_updated")
-      result.schema.fields(4).dataType.typeName should be("integer")
+      result.schema.fields(4).dataType.typeName should be("timestamp")
       result.schema.fields(5).name should be("station_id")
       result.schema.fields(5).dataType.typeName should be("string")
       result.schema.fields(6).name should be("name")
@@ -61,7 +62,7 @@ class E2EStationSFTest extends FeatureSpec with Matchers with GivenWhenThen {
       row1.get(1) should be(10)
       row1.get(2) shouldBe true
       row1.get(3) shouldBe true
-      row1.get(4) should be(1574917752)
+//      row1.get(4) should be(1574917752)
       row1.get(5) should be("7a10659bcb8e88d97a98531df0dcd2be")
       row1.get(6) should be("Webster St at Clay St")
       row1.get(7) should be(37.79080303242391)

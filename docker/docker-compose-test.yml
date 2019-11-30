@@ -80,13 +80,12 @@ services:
         context: ../E2ETests
         dockerfile: Dockerfile-run-e2e-test
       depends_on:
-        - zookeeper-seed
-        - kafka
         - station-san-francisco-producer
         - station-consumer
-        - hadoop
       volumes:
         - ~/.ivy2:/root/.ivy2:rw
+        - ~/.sbt:/root/.sbt:rw
+        - ~/.cache:/root/.cache:rw
       networks:
         - streaming-data-internal
       restart: on-failure
@@ -95,11 +94,6 @@ services:
         build:
           context: ../E2Etests
           dockerfile: Dockerfile-mock-server
-        depends_on:
-          - zookeeper-seed
-          - hadoop-seed
-          - kafka
-          - station-consumer
         ports:
           - "5001:5001"
         command: ["npm", "test"]

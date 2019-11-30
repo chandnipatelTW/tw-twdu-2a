@@ -8,12 +8,12 @@ echo "====Building Consumer JARs===="
 cd $DIR/../StationConsumer && sbt package
 echo "====Running docker-compose===="
 
-docker-compose -f $DIR/../docker/docker-compose-test.yml up --build
+docker-compose -f $DIR/../docker/docker-compose-test.yml up --build -d
 
 docker-compose -f $DIR/../docker/docker-compose-test.yml exec e2e-test sbt test
 
-#RESULT=echo $?
+RESULT=$?
 
-#docker-compose -f $DIR/../docker/docker-compose-test.yml down
+docker-compose -f $DIR/../docker/docker-compose-test.yml down
 
-#exit RESULT
+exit "$RESULT"
