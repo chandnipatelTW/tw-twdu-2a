@@ -13,11 +13,11 @@ class OverwriteCSVSink(sqlContext: SQLContext,
 
   override def addBatch(batchId: Long, data: DataFrame): Unit = {
 
-    data.sparkSession.createDataFrame(
-      data.sparkSession.sparkContext.parallelize(data.collect()), data.schema)
-      .repartition(1)
+    data.sparkSession
+      .createDataFrame(data.sparkSession.sparkContext.parallelize(data.collect()), data.schema)
       .write
-      .mode(SaveMode.Overwrite)
+      .mode(SaveMode.Append)
+      .partitionBy(partitionColumns:_*)
       .format("csv")
       .option("header", parameters.get("header").orNull)
       .option("truncate", parameters.get("truncate").orNull)

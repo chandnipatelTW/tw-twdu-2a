@@ -3,6 +3,7 @@ package com.free2wheelers.apps
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.ExponentialBackoffRetry
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions._
 
 import com.free2wheelers.apps.StationStatusTransformation._
 import StationUtils._
@@ -74,8 +75,13 @@ object StationApp {
       .reduceGroups((r1, r2) => if (r1.last_updated > r2.last_updated) r1 else r2)
       .map(_._2)
       .formatLastUpdatedDate(dateFormat, spark)
+      .withColumn("year", year($"last_updated"))
+      .withColumn("month", month($"last_updated"))
+      .withColumn("day", dayofmonth($"last_updated"))
+      .withColumn("hour", hour($"last_updated"))
+      .withColumn("minute", minute($"last_updated"))
       .writeStream
-      .partitionBy("last_updated")
+      .partitionBy("year", "month", "day", "hour", "minute")
       .outputMode("update")
       .format("overwriteCSV")
       .option("header", true)
