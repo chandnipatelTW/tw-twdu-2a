@@ -1,5 +1,7 @@
 package com.free2wheelers.apps
 
+import java.sql.Timestamp.valueOf
+
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.ExponentialBackoffRetry
 import org.apache.spark.sql.SparkSession
@@ -21,18 +23,17 @@ class E2EStationSFTest extends FeatureSpec with Matchers with GivenWhenThen {
     val zkClient = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy)
     zkClient.start()
 
-    import spark.implicits._
-
     scenario("Transform SF station data frame") {
 
       val outputLocation = new String(zkClient.getData.watched.forPath("/free2wheelers/output/dataLocation"))
+      val outputPath = outputLocation + "/year=2019/month=11/day=28/hour=5/minute=9"
 
       val result = spark.read
         .option("header", "true")
         .option("inferSchema", "true")
-        .csv(outputLocation).toDF()
+        .csv(outputPath).toDF()
 
-      result.show(truncate=false)
+      result.show(truncate = false)
       result.printSchema()
 
       Given("The producer got data from mock server")
@@ -57,16 +58,16 @@ class E2EStationSFTest extends FeatureSpec with Matchers with GivenWhenThen {
       result.schema.fields(8).name should be("longitude")
       result.schema.fields(8).dataType.typeName should be("double")
 
-      val row1 = result.head()
-      row1.get(0) should be(9)
-      row1.get(1) should be(10)
+      val row1 = result.sort("last_updated").head()
+      row1.get(0) should be(16)
+      row1.get(1) should be(3)
       row1.get(2) shouldBe true
       row1.get(3) shouldBe true
-//      row1.get(4) should be(1574917752)
-      row1.get(5) should be("7a10659bcb8e88d97a98531df0dcd2be")
-      row1.get(6) should be("Webster St at Clay St")
-      row1.get(7) should be(37.79080303242391)
-      row1.get(8) should be(-122.43259012699126)
+      row1.get(4) should be(valueOf("2019-11-28 05:09:12"))
+      row1.get(5) should be("73f8aa6ec3250de2a02cc0763f5a19eb")
+      row1.get(6) should be("Mercado Way at Sierra Rd")
+      row1.get(7) should be(37.37111641335901)
+      row1.get(8) should be(-121.88133180141449)
 
       result.count() should be(3)
     }
