@@ -1,9 +1,9 @@
-package main.apps
+package com.free2wheelers.apps
 
 import org.apache.log4j.{Level, LogManager, Logger}
-import org.apache.spark.sql.{SparkSession}
+import org.apache.spark.sql.SparkSession
 
-object UniqueStationIdValidator {
+object UniqueStationIdValidator{
   val log: Logger = LogManager.getRootLogger
   log.setLevel(Level.INFO)
 
@@ -13,23 +13,25 @@ object UniqueStationIdValidator {
 
     val inputPath = "hdfs://emr-master.twdu-2a.training:8020/free2wheelers/stationMart/data"
 
-    run(spark, inputPath)
+    validate(spark, inputPath)
     log.info("Application Done: " + spark.sparkContext.appName)
     spark.stop()
   }
 
-  def run(spark: SparkSession, inputPath: String): Unit = {
+  def validate(spark: SparkSession, inputPath: String): Boolean = {
     log.info("Reading text file from: " + inputPath)
 
     import spark.implicits._
     val duplicatesCount = spark
       .read
+      .option("header", "true")
       .csv(inputPath)
       .groupBy($"station_id")
       .count
       .filter($"count">1)
       .count()
-    log.info("Duplicates station Ids Count: " + duplicatesCount)
-  }
 
+    log.info("Duplicates station Ids Count: " + duplicatesCount)
+    duplicatesCount == 0
+  }
 }
