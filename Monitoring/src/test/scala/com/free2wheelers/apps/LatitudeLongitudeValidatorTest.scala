@@ -1,19 +1,19 @@
 package com.free2wheelers.apps
 
-import org.apache.spark.sql.{Dataset, SparkSession}
+import org.apache.spark.sql.SparkSession
 import org.scalatest._
 
-class UniqueStationValidatorTest extends FeatureSpec with Matchers with GivenWhenThen {
+class LatitudeLongitudeValidatorTest extends FeatureSpec with Matchers with GivenWhenThen {
 
-  feature("Unique Station Validator") {
+  feature("Latitude Longitude Validator") {
     val spark = SparkSession.builder.appName("Test App").master("local").getOrCreate()
 
-    scenario("Validates for unique station ids") {
-      Given("station Mart data file with unique station Ids")
+    scenario("Validates if each station has latitude and longitude") {
+      Given("station Mart data file with latitude and longitude for each station")
       val inputPath = "src/test/resources/StationMartData/Valid.csv"
 
       When("validator runs")
-      val duplicatesCount = UniqueStationIdValidator.validate(spark, inputPath)
+      val duplicatesCount = LatitudeLongitudeValidator.validate(spark, inputPath)
 
       Then("returns true")
       duplicatesCount shouldBe true
