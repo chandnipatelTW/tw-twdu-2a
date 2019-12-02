@@ -1,14 +1,14 @@
-package com.free2wheelers.apps
+package main.apps
 
 import org.apache.log4j.{Level, LogManager, Logger}
 import org.apache.spark.sql.{SparkSession}
 
-object DeliveryFileReader {
+object UniqueStationIdValidator {
   val log: Logger = LogManager.getRootLogger
   log.setLevel(Level.INFO)
 
   def main(args: Array[String]): Unit = {
-    val spark = SparkSession.builder.appName("DeliveryFileValidation - Kales/Katie").getOrCreate()
+    val spark = SparkSession.builder.appName("Unique Station Id Validator").getOrCreate()
     log.info("Application Initialized: " + spark.sparkContext.appName)
 
     val inputPath = "hdfs://emr-master.twdu-2a.training:8020/free2wheelers/stationMart/data"
@@ -25,8 +25,11 @@ object DeliveryFileReader {
     val duplicatesCount = spark
       .read
       .csv(inputPath)
-      .groupBy($"station_id").count.filter($"count">1).count()
-    log.info("Duplicates Count: " + duplicatesCount)
+      .groupBy($"station_id")
+      .count
+      .filter($"count">1)
+      .count()
+    log.info("Duplicates station Ids Count: " + duplicatesCount)
   }
 
 }
