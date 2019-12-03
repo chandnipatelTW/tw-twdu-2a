@@ -7,10 +7,14 @@ import org.apache.spark.sql.catalyst.ScalaReflection
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions.{udf, _}
 import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.slf4j.LoggerFactory.getLogger
 
+import scala.util.{Failure, Try}
 import scala.util.parsing.json.JSON
 
 object StationStatusTransformation {
+
+  val log = getLogger(getClass)
 
   val sfToStationStatus: String => Seq[StationStatus] = raw_payload => {
     val json = JSON.parseFull(raw_payload)
@@ -23,9 +27,8 @@ object StationStatusTransformation {
     val network: Any = payload.asInstanceOf[Map[String, Any]]("network")
 
     val stations: Any = network.asInstanceOf[Map[String, Any]]("stations")
-
     stations.asInstanceOf[Seq[Map[String, Any]]]
-      .map(x => {
+      .flatMap(x => (Try(
         StationStatus(
           x("free_bikes").asInstanceOf[Double].toInt,
           x("empty_slots").asInstanceOf[Double].toInt,
@@ -36,8 +39,12 @@ object StationStatusTransformation {
           x("name").asInstanceOf[String],
           x("latitude").asInstanceOf[Double],
           x("longitude").asInstanceOf[Double]
-        )
-      })
+        )) match {
+        case f @ Failure(e: NoSuchElementException) =>
+          log.error("Schema Error", e)
+          f
+        case s => s
+      }).toOption)
   }
 
   def sfStationStatusJson2DF(jsonDF: DataFrame, spark: SparkSession): DataFrame = {
