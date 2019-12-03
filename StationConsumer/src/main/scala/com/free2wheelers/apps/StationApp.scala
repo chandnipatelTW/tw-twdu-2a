@@ -1,16 +1,19 @@
 package com.free2wheelers.apps
 
+import com.free2wheelers.apps.StationStatusTransformation._
+import com.free2wheelers.apps.StationUtils._
 import org.apache.curator.framework.CuratorFrameworkFactory
 import org.apache.curator.retry.ExponentialBackoffRetry
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
-
-import com.free2wheelers.apps.StationStatusTransformation._
-import StationUtils._
+import org.slf4j.LoggerFactory.getLogger
 
 object StationApp {
 
   def main(args: Array[String]): Unit = {
+
+    val log = getLogger(this.getClass)
+    log.info("Initializing Station Consumer")
 
     val zookeeperConnectionString = if (args.isEmpty) "zookeeper:2181" else args(0)
 
