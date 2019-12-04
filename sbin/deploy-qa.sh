@@ -86,7 +86,7 @@ echo "====Producers Deployed===="
 echo "====Start mock server===="
 cd /tmp/E2ETests
 npm install
-npm test &
+nohup npm test &
 echo "====mock server started===="
 '
 
