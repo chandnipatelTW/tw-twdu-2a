@@ -1,7 +1,7 @@
 package com.free2wheelers.apps
 
 import java.time.Instant
-import java.time.format.DateTimeFormatter
+import java.time.format.{DateTimeFormatter, DateTimeParseException}
 
 import org.apache.spark.sql.catalyst.ScalaReflection
 import org.apache.spark.sql.expressions.UserDefinedFunction
@@ -28,26 +28,28 @@ object StationStatusTransformation {
 
     val stations: Any = network.asInstanceOf[Map[String, Any]]("stations")
     stations.asInstanceOf[Seq[Map[String, Any]]]
-      .flatMap(x => (Try(
-        StationStatus(
-          x("free_bikes").asInstanceOf[Double].toInt,
-          x("empty_slots").asInstanceOf[Double].toInt,
-          x("extra").asInstanceOf[Map[String, Any]]("renting").asInstanceOf[Double] == 1,
-          x("extra").asInstanceOf[Map[String, Any]]("returning").asInstanceOf[Double] == 1,
-          Instant.from(DateTimeFormatter.ISO_INSTANT.parse(x("timestamp").asInstanceOf[String])).getEpochSecond,
-          x("id").asInstanceOf[String],
-          x("name").asInstanceOf[String],
-          x("latitude").asInstanceOf[Double],
-          x("longitude").asInstanceOf[Double]
-        )) match {
-        case f @ Failure(e: NoSuchElementException) =>
-          log.error("Schema Error", e)
-          f
-        case f @ Failure(e: ClassCastException) =>
-          log.error("Datatype mismatch Error", e)
-          f
-        case s => s
-      }).toOption)
+      .flatMap(x => {
+        (Try(
+          StationStatus(
+            x("free_bikes").asInstanceOf[Double].toInt,
+            x("empty_slots").asInstanceOf[Double].toInt,
+            x("extra").asInstanceOf[Map[String, Any]]("renting").asInstanceOf[Double] == 1,
+            x("extra").asInstanceOf[Map[String, Any]]("returning").asInstanceOf[Double] == 1,
+            Instant.from(DateTimeFormatter.ISO_INSTANT.parse(x("timestamp").asInstanceOf[String])).getEpochSecond,
+            x("id").asInstanceOf[String],
+            x("name").asInstanceOf[String],
+            x("latitude").asInstanceOf[Double],
+            x("longitude").asInstanceOf[Double]
+          )) match {
+          case f @ Failure(e: NoSuchElementException) =>
+            log.error("Schema Error: ", e)
+            f
+          case f @ Failure(e: ClassCastException) =>
+            log.error("Datatype mismatch Error: ", e)
+            f
+          case s => s
+        }).toOption
+      })
   }
 
   def sfStationStatusJson2DF(jsonDF: DataFrame, spark: SparkSession): DataFrame = {
@@ -79,18 +81,30 @@ object StationStatusTransformation {
     val stations: Any = network.asInstanceOf[Map[String, Any]]("stations")
 
     stations.asInstanceOf[Seq[Map[String, Any]]]
-      .map(x => {
-        StationStatus(
-          x("free_bikes").asInstanceOf[Double].toInt,
-          x("empty_slots").asInstanceOf[Double].toInt,
-          true,
-          true,
-          Instant.from(DateTimeFormatter.ISO_INSTANT.parse(x("timestamp").asInstanceOf[String])).getEpochSecond,
-          x("id").asInstanceOf[String],
-          x("name").asInstanceOf[String],
-          x("latitude").asInstanceOf[Double],
-          x("longitude").asInstanceOf[Double]
-        )
+      .flatMap(x => {
+        (Try(
+          StationStatus(
+            x("free_bikes").asInstanceOf[Double].toInt,
+            x("empty_slots").asInstanceOf[Double].toInt,
+            true,
+            true,
+            Instant.from(DateTimeFormatter.ISO_INSTANT.parse(x("timestamp").asInstanceOf[String])).getEpochSecond,
+            x("id").asInstanceOf[String],
+            x("name").asInstanceOf[String],
+            x("latitude").asInstanceOf[Double],
+            x("longitude").asInstanceOf[Double]
+          )) match {
+          case f @ Failure(e: NoSuchElementException) =>
+            log.error("Schema Error: ", e)
+            f
+          case f @ Failure(e: ClassCastException) =>
+            log.error("Datatype mismatch Error: ", e)
+            f
+          case f @ Failure(e: DateTimeParseException) =>
+            log.error("Timestamp parse Error: ", e)
+            f
+          case s => s
+        }).toOption
       })
   }
 
