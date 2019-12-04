@@ -10,7 +10,7 @@ import org.scalatest._
 class E2EStationSFTest extends FeatureSpec with Matchers with GivenWhenThen {
 
   feature("End to end test for SF station data") {
-    Thread.sleep(15000)
+    Thread.sleep(18000)
 
     val spark = SparkSession.builder
       .appName("E2E Test")
