@@ -51,7 +51,7 @@ echo "====Inserted yarn config in EMR===="
 
 echo "====Copy producer and mockserver jar to ingester server===="
 scp CitibikeApiProducer/build/libs/free2wheelers-citibike-apis-producer0.1.0.jar ingester.twdu-2a-qa.training:/tmp/
-scp -rp E2ETests/src/mock_server ingester.twdu-2a-qa.training:/tmp/
+scp -rp E2ETests ingester.twdu-2a-qa.training:/tmp/
 
 
 echo "====Jar copied to ingester server===="
@@ -84,9 +84,9 @@ nohup java -jar /tmp/free2wheelers-citibike-apis-producer0.1.0.jar --spring.prof
 echo "====Producers Deployed===="
 
 echo "====Start mock server===="
-cd /tmp
+cd /tmp/E2ETests
 npm install
-npm start &
+npm test &
 echo "====mock server started===="
 '
 
