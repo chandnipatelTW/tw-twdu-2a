@@ -4,7 +4,8 @@ set -xe
 
 echo "====Updating YARN Config on EMR===="
 
-scp -r ./Conf/hadoop/* hadoop@emr-master.twdu-2a-qa.training:/etc/hadoop/conf/
+scp -r ./Conf/hadoop/capacity-scheduler.xml hadoop@emr-master.twdu-2a-qa.training:/etc/hadoop/conf/capacity-scheduler.xml
+scp -r ./Conf/hadoop/yarn-site-qa.xml hadoop@emr-master.twdu-2a-qa.training:/etc/hadoop/conf/yarn-site.xml
 
 # To refresh YARN configuration, see commands from here:
 # https://hadoop.apache.org/docs/r2.7.4/hadoop-yarn/hadoop-yarn-site/YarnCommands.html
