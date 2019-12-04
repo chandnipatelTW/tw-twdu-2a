@@ -7,7 +7,7 @@ import org.apache.spark.sql.SparkSession
 object UniqueStationIdValidator{
   val log: Logger = LogManager.getRootLogger
   log.setLevel(Level.INFO)
-  val defaultInput = "hdfs://emr-master.twdu-2a.training:8020/user/hadoop/nisha/data/minute=37"
+  val defaultInput = "hdfs://emr-master.twdu-2a.training:8020/free2wheelers/stationMart/data"
   val defaultOutput = "hdfs://ip-10-0-3-209.ap-southeast-1.compute.internal:8020/free2wheelers/monitoring/UniqueStationIdValidator/output.txt"
 
   def main(args: Array[String]): Unit = {

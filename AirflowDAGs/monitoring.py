@@ -114,7 +114,7 @@ def push_metric(name, value):
         Namespace='TwoWheelers'
     )
 
-with DAG('TwoWheeler-Mart-Monitor-3',
+with DAG('TwoWheeler-Mart-Monitor',
          default_args=default_args,
          schedule_interval='5 * * * *',
          catchup=False
