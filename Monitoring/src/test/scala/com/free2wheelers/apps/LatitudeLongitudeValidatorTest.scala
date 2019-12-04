@@ -15,8 +15,8 @@ class LatitudeLongitudeValidatorTest extends FeatureSpec with Matchers with Give
       When("validator runs")
       val duplicatesCount = LatitudeLongitudeValidator.validate(spark, inputPath)
 
-      Then("returns true")
-      duplicatesCount shouldBe true
+      Then("returns 0")
+      duplicatesCount shouldBe 0
     }
 
     scenario("InValidates for duplicate station ids") {
@@ -24,10 +24,10 @@ class LatitudeLongitudeValidatorTest extends FeatureSpec with Matchers with Give
       val inputPath = "src/test/resources/StationMartData/Invalid.csv"
 
       When("validator runs")
-      val duplicatesCount = UniqueStationIdValidator.validate(spark, inputPath)
+      val duplicatesCount = LatitudeLongitudeValidator.validate(spark, inputPath)
 
-      Then("returns false")
-      duplicatesCount shouldBe false
+      Then("returns 2")
+      duplicatesCount shouldBe 2
     }
 
   }

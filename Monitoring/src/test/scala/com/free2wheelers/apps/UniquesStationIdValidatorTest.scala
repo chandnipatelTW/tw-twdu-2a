@@ -15,8 +15,8 @@ class UniqueStationValidatorTest extends FeatureSpec with Matchers with GivenWhe
       When("validator runs")
       val duplicatesCount = UniqueStationIdValidator.validate(spark, inputPath)
 
-      Then("returns true")
-      duplicatesCount shouldBe true
+      Then("returns 0")
+      duplicatesCount shouldBe 0
     }
 
     scenario("InValidates for duplicate station ids") {
@@ -26,8 +26,8 @@ class UniqueStationValidatorTest extends FeatureSpec with Matchers with GivenWhe
       When("validator runs")
       val duplicatesCount = UniqueStationIdValidator.validate(spark, inputPath)
 
-      Then("returns false")
-      duplicatesCount shouldBe false
+      Then("returns 1")
+      duplicatesCount shouldBe 1
     }
 
   }
