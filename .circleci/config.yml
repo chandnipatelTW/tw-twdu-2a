@@ -79,7 +79,7 @@ workflows:
             - approve-deploy:
                 type: approval
                 requires: 
-                    - deploy-qa
+                    - build
             - deploy:
                 requires:
                     - approve-deploy
