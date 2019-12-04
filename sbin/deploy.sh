@@ -142,6 +142,7 @@ echo "====Raw Data Saver Deployed===="
 
 echo "====Copy Station Consumers Jar to EMR===="
 scp StationConsumer/target/scala-2.11/free2wheelers-station-consumer_2.11-0.0.1.jar emr-master.twdu-2a.training:/tmp/
+scp StationConsumer/target/scala-2.11/classes/log4j.properties emr-master.twdu-2a.training:/tmp/
 
 scp StationTransformerNYC/target/scala-2.11/free2wheelers-station-transformer-nyc_2.11-0.0.1.jar emr-master.twdu-2a.training:/tmp/
 echo "====Station Consumers Jar Copied to EMR===="
@@ -163,7 +164,15 @@ echo "====Old Station Consumers Killed===="
 
 echo "====Deploy Station Consumers===="
 
-nohup spark-submit --master yarn --queue streaming --deploy-mode cluster --class com.free2wheelers.apps.StationApp --name StationApp --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.0  --driver-memory 500M /tmp/free2wheelers-station-consumer_2.11-0.0.1.jar kafka.twdu-2a.training:2181 1>/tmp/station-consumer.log 2>/tmp/station-consumer.error.log &
+nohup spark-submit --master yarn \
+        --queue streaming --deploy-mode cluster \
+        --class com.free2wheelers.apps.StationApp \
+        --name StationApp \
+        --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.0 \
+        --driver-java-options "-Dlog4j.configuration=file:/tmp/log4j.properties" \
+        --conf "spark.executor.extraJavaOptions=-Dlog4j.configuration=file:/tmp/log4j.properties" \
+        --files "/tmp/log4j.properties" \
+        --driver-memory 500M /tmp/free2wheelers-station-consumer_2.11-0.0.1.jar kafka.twdu-2a.training:2181 1>/tmp/station-consumer.log &
 
 nohup spark-submit --master yarn --queue streaming --deploy-mode cluster --class com.free2wheelers.apps.StationApp --name StationTransformerNYC --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.0  --driver-memory 500M /tmp/free2wheelers-station-transformer-nyc_2.11-0.0.1.jar kafka.twdu-2a.training:2181 1>/tmp/station-transformer-nyc.log 2>/tmp/station-transformer-nyc.error.log &
 
