@@ -1,7 +1,7 @@
 package com.free2wheelers.apps
 
 import java.time.Instant
-import java.time.format.{DateTimeFormatter, DateTimeParseException}
+import java.time.format.DateTimeFormatter
 
 import org.apache.spark.sql.catalyst.ScalaReflection
 import org.apache.spark.sql.expressions.UserDefinedFunction
@@ -9,12 +9,14 @@ import org.apache.spark.sql.functions.{udf, _}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.slf4j.LoggerFactory.getLogger
 
-import scala.util.{Failure, Try}
 import scala.util.parsing.json.JSON
+import scala.util.{Failure, Try}
+import ExceptionHandler._
+import org.slf4j.Logger
 
 object StationStatusTransformation {
 
-  val log = getLogger(getClass)
+  val log: Logger = getLogger(getClass)
 
   val sfToStationStatus: String => Seq[StationStatus] = raw_payload => {
     val json = JSON.parseFull(raw_payload)
@@ -29,7 +31,7 @@ object StationStatusTransformation {
     val stations: Any = network.asInstanceOf[Map[String, Any]]("stations")
     stations.asInstanceOf[Seq[Map[String, Any]]]
       .flatMap(x => {
-        (Try(
+        val station = Try(
           StationStatus(
             x("free_bikes").asInstanceOf[Double].toInt,
             x("empty_slots").asInstanceOf[Double].toInt,
@@ -40,15 +42,8 @@ object StationStatusTransformation {
             x("name").asInstanceOf[String],
             x("latitude").asInstanceOf[Double],
             x("longitude").asInstanceOf[Double]
-          )) match {
-          case f @ Failure(e: NoSuchElementException) =>
-            log.error("Schema Error: ", e)
-            f
-          case f @ Failure(e: ClassCastException) =>
-            log.error("Datatype mismatch Error: ", e)
-            f
-          case s => s
-        }).toOption
+          ))
+          handle(station).toOption
       })
   }
 
@@ -82,29 +77,19 @@ object StationStatusTransformation {
 
     stations.asInstanceOf[Seq[Map[String, Any]]]
       .flatMap(x => {
-        (Try(
+        val station = Try(
           StationStatus(
             x("free_bikes").asInstanceOf[Double].toInt,
             x("empty_slots").asInstanceOf[Double].toInt,
-            true,
-            true,
+            is_renting = true,
+            is_returning = true,
             Instant.from(DateTimeFormatter.ISO_INSTANT.parse(x("timestamp").asInstanceOf[String])).getEpochSecond,
             x("id").asInstanceOf[String],
             x("name").asInstanceOf[String],
             x("latitude").asInstanceOf[Double],
             x("longitude").asInstanceOf[Double]
-          )) match {
-          case f @ Failure(e: NoSuchElementException) =>
-            log.error("Schema Error: ", e)
-            f
-          case f @ Failure(e: ClassCastException) =>
-            log.error("Datatype mismatch Error: ", e)
-            f
-          case f @ Failure(e: DateTimeParseException) =>
-            log.error("Timestamp parse Error: ", e)
-            f
-          case s => s
-        }).toOption
+          ))
+        handle(station).toOption
       })
   }
 
