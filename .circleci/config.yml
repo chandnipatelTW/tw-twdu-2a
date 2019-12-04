@@ -47,6 +47,18 @@ jobs:
             - run:
                 command: ./sbin/deploy.sh
 
+    deploy-qa:
+        <<: *defaults
+        steps:
+            - checkout
+            - attach_workspace:
+                at: /home/circleci/project
+            - add_ssh_keys:
+                fingerprints:
+                    - "1a:05:f8:32:c6:ee:17:58:0a:f1:dd:cc:d0:13:79:46:34:53:7a:b6"
+            - run:
+                command: ./sbin/deploy-qa.sh
+
 workflows:
     version: 2
     build_and_deploy:
@@ -57,10 +69,17 @@ workflows:
                         only: 
                             - master
                             - start
-            - approve-deploy:
+            - approve-deploy-qa:
                 type: approval
                 requires: 
                     - build
+            - deploy-qa:
+                requires:
+                    - approve-deploy-qa
+            - approve-deploy:
+                type: approval
+                requires: 
+                    - deploy-qa
             - deploy:
                 requires:
                     - approve-deploy

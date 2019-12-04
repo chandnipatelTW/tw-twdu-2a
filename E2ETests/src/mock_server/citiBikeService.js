@@ -26,7 +26,7 @@ function addService() {
     ];
 
     const imposter = {
-        port: settings.citibankServicePort,
+        port: settings.citibikeServicePort,
         protocol: 'http',
         stubs: stubs
     };
