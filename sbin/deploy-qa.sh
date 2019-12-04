@@ -71,16 +71,16 @@ function kill_process {
     fi
 }
 
-test-station-sf-qa="test-station-sf-qa"
+test_station_sf_qa="test-station-sf-qa"
 
 echo "====Kill running producers===="
 
-kill_process ${test-station-sf-qa}
+kill_process ${test_station_sf_qa}
 
 echo "====Runing Producers Killed===="
 
 echo "====Deploy Producers===="
-nohup java -jar /tmp/free2wheelers-citibike-apis-producer0.1.0.jar --spring.profiles.active=${test-station-sf-qa} --producer.topic=station_data_sf --kafka.brokers=kafka.twdu-2a-qa.training:9092 1>/tmp/${test-station-sf-qa}.log 2>/tmp/${test-station-sf-qa}.error.log &
+nohup java -jar /tmp/free2wheelers-citibike-apis-producer0.1.0.jar --spring.profiles.active=${test_station_sf_qa} --producer.topic=station_data_sf --kafka.brokers=kafka.twdu-2a-qa.training:9092 1>/tmp/${test_station_sf_qa}.log 2>/tmp/${test_station_sf_qa}.error.log &
 echo "====Producers Deployed===="
 
 echo "====Start mock server===="
