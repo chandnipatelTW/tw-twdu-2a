@@ -94,11 +94,11 @@ echo "====mock server started===="
 echo "====Configure HDFS paths===="
 scp ./hdfs/seed.sh emr-master.twdu-2a-qa.training:/tmp/hdfs-seed.sh
 
-ssh emr-master.twdu-2a-qa.training '
-set -e
-export hdfs_server="emr-master.twdu-2a-qa.training:8020"
-export hadoop_path="hadoop"
-sh /tmp/hdfs-seed.sh
+ssh -4 emr-master.twdu-2a-qa.training '
+  set -e  
+  export hdfs_server="emr-master.twdu-2a-qa.training:8020"  
+  export hadoop_path="hadoop"  
+  sh /tmp/hdfs-seed.sh
 '
 
 echo "====HDFS paths configured==="
@@ -110,7 +110,7 @@ echo "====Raw Data Saver Jar Copied to EMR===="
 
 scp sbin/go.sh emr-master.twdu-2a-qa.training:/tmp/go.sh
 
-ssh emr-master.twdu-2a-qa.training '
+ssh -4 emr-master.twdu-2a-qa.training '
 set -e
 
 source /tmp/go.sh
@@ -136,7 +136,7 @@ echo "====Station Consumers Jar Copied to EMR===="
 
 scp sbin/go.sh emr-master.twdu-2a-qa.training:/tmp/go.sh
 
-ssh emr-master.twdu-2a-qa.training '
+ssh -4 emr-master.twdu-2a-qa.training '
 set -e
 
 source /tmp/go.sh
