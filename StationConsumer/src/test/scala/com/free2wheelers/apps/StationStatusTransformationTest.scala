@@ -192,6 +192,78 @@ class StationStatusTransformationTest extends FeatureSpec with Matchers with Giv
       row1.get(8) should be(-122.39827930927277)
     }
 
+    scenario("Should Ignore Records with datatype Errors") {
+      val testStationData =
+        """{
+          |    "payload": {
+          |        "network": {
+          |            "stations": [ {
+          |                "empty_slots": "11 empty slots",
+          |                "extra": {
+          |                    "address": null, "last_updated": 1574751329, "renting": 1, "returning": 1, "uid": "345"
+          |                }
+          |                ,
+          |                "free_bikes": 16,
+          |                "id": "98cf498d2fa09046f98abeb6a9e902ff",
+          |                "latitude": 37.766482696439496,
+          |                "longitude": -122.39827930927277,
+          |                "name": "Hubbell St at 16th St",
+          |                "timestamp": "2019-11-26T09:26:54.819000Z"
+          |            },
+          |            {
+          |                "empty_slots": 10,
+          |                "extra": {
+          |                    "address": null, "last_updated": 1574751329, "renting": 1, "returning": 1, "uid": "345"
+          |                }
+          |                ,
+          |                "available_bikes_schema_change": 1,
+          |                "id": "98cf498d2fa09046f98abeb6a9e902ff",
+          |                "latitude": 37.766482696439496,
+          |                "longitude": -122.39827930927277,
+          |                "name": "Hubbell St at 16th St",
+          |                "timestamp": "2019-11-26T09:26:54.819000Z"
+          |            },
+          |            {
+          |                "empty_slots": 10,
+          |                "extra": {
+          |                    "address": null, "last_updated": 1574751329, "renting": 1, "returning": 1, "uid": "345"
+          |                }
+          |                ,
+          |                "free_bikes": 1,
+          |                "id": "98cf498d2fa09046f98abeb6a9e902ff",
+          |                "latitude": 37.766482696439496,
+          |                "longitude": -122.39827930927277,
+          |                "name": "Hubbell St at 16th St",
+          |                "timestamp": "2019-11-26T09:26:54.819000Z"
+          |            }
+          |            ]
+          |        }
+          |    }
+          |}""".stripMargin
+
+
+      Given("Sample data for station_status with different schema")
+      val testDF1 = Seq(testStationData).toDF("raw_payload")
+
+
+      When("Transformations are applied")
+      val resultDF1 = testDF1.transform(sfStationStatusJson2DF(_, spark))
+
+      Then("Meaningful rows should be retrieved")
+
+      resultDF1.count() should be(1)
+      val row1 = resultDF1.head()
+      row1.get(0) should be(1)
+      row1.get(1) should be(10)
+      row1.get(2) shouldBe true
+      row1.get(3) shouldBe true
+      row1.get(4) should be(1574760414)
+      row1.get(5) should be("98cf498d2fa09046f98abeb6a9e902ff")
+      row1.get(6) should be("Hubbell St at 16th St")
+      row1.get(7) should be(37.766482696439496)
+      row1.get(8) should be(-122.39827930927277)
+    }
+
     scenario("Transform Marseille station data frame") {
 
       val testStationData =

@@ -43,6 +43,9 @@ object StationStatusTransformation {
         case f @ Failure(e: NoSuchElementException) =>
           log.error("Schema Error", e)
           f
+        case f @ Failure(e: ClassCastException) =>
+          log.error("Datatype mismatch Error", e)
+          f
         case s => s
       }).toOption)
   }
