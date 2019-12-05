@@ -18,3 +18,8 @@ sbt package
 cd $DIR/../StationTransformerNYC
 sbt test
 sbt package
+
+cd $DIR/../Monitoring
+sbt test
+sbt package
+

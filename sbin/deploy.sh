@@ -172,3 +172,5 @@ nohup spark-submit --master yarn --queue streaming --deploy-mode cluster --class
 
 echo "====Station Consumers Deployed===="
 '
+
+scp Monitoring/target/scala-2.11/free2wheelers-monitoring_2.11-0.0.1.jar emr-master.twdu-2a.training:/tmp/
