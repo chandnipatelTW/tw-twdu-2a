@@ -11,7 +11,7 @@ from airflow.operators.bash_operator import BashOperator
 
 default_args = {
     'owner': 'me',
-    'start_date': datetime.datetime(2017, 11, 21),
+    'start_date': datetime.datetime(2017, 12, 4),
     'retries': 1,
     'retry_delay': datetime.timedelta(minutes=5),
 }
@@ -28,20 +28,16 @@ def station_mart_last_modified_time(**context):
     print("Station Mart was last updated at", datetime.datetime.fromtimestamp(last_modified_time/1000))
     return last_modified_time
 
-def has_station_mart_updated(**context):
+def push_station_mart_metric(**context):
     station_mart_last_update = context['task_instance'].xcom_pull(task_ids='station_mart_last_modified_time')
     now = int(round(time.time() * 1000))
     print("Station Mart HDFS directory was last updated at", station_mart_last_update)
     print("Now is", datetime.datetime.fromtimestamp(now/1000))
     minutes_diff = (now - station_mart_last_update) / 1000 / 60
-    print("Minutes diff", minutes_diff)
-    return 1 if minutes_diff < 5 else 0
 
-def push_station_mart_updated_metric(**context):
-    is_station_mart_updated = context['task_instance'].xcom_pull(task_ids='has_station_mart_updated')
-    print("Pushing metrics to cloud watch")
-    push_metric("has_station_mart_updated", is_station_mart_updated)
-    if is_station_mart_updated == 0:
+    print("Station mart was last updated this minutes ago: ", minutes_diff)
+    push_metric("has_station_mart_updated", minutes_diff)
+    if minutes_diff > 5:
         raise ValueError('Station Mart has not updated in last 5 minutes!')
 
 
@@ -55,19 +51,14 @@ def run_station_id_validator():
         echo 'Unique StationId Validator completed!'
     """
 
-def read_station_id_metric(**context):
+def push_station_id_metric(**context):
     url = "http://emr-master.twdu-2a.training:50070/webhdfs/v1/free2wheelers/monitoring/UniqueStationIdValidator/output.txt?op=OPEN"
 
     headers = {'content-type': "application/json",'cache-control': "no-cache"}
     response = requests.request("GET", url, headers=headers)
-    result = json.loads(response.text)
-    print("Count of duplicate station ids is: ", result)
-    return result
-
-def push_station_id_metric(**context):
-    count = context['task_instance'].xcom_pull(task_ids='read_station_id_metric')
-    print("Pushing unique station Id metrics to cloud watch")
-    push_metric("duplicate_station_id_count", count)
+    duplicate_station_id_count = json.loads(response.text)
+    print("Count of duplicate station ids is: ", duplicate_station_id_count)
+    push_metric("duplicate_station_id_count", duplicate_station_id_count)
 
 
 # Null latitude longitude validator
@@ -80,22 +71,18 @@ def run_lat_long_validator():
         echo 'Latitude Longitude Validator completed!'
     """
 
-def read_lat_long_metric(**context):
+def push_lat_long_metric(**context):
     url = "http://emr-master.twdu-2a.training:50070/webhdfs/v1/free2wheelers/monitoring/LatitudeLongitudeValidator/output.txt?op=OPEN"
 
     headers = {'content-type': "application/json",'cache-control': "no-cache"}
     response = requests.request("GET", url, headers=headers)
-    result = json.loads(response.text)
-    print("Count of null latitude or longitude is: ", result)
-    return result
-
-def push_lat_long_metric(**context):
-    count = context['task_instance'].xcom_pull(task_ids='read_lat_long_metric')
-    print("Pushing null latitude longitude metrics to cloud watch")
-    push_metric("null_latitude_longitude_count", count)
+    null_latitude_longitude_count = json.loads(response.text)
+    print("Count of null latitude or longitude is: ", null_latitude_longitude_count)
+    push_metric("null_latitude_longitude_count", null_latitude_longitude_count)
 
 
 def push_metric(name, value):
+    print("Pushing metric to cloud watch ", name, value)
     cloudwatch = boto3.client('cloudwatch', region_name='ap-southeast-1')
     cloudwatch.put_metric_data(
         MetricData=[
@@ -114,7 +101,7 @@ def push_metric(name, value):
         Namespace='TwoWheelers'
     )
 
-with DAG('TwoWheeler-Mart-Monitor',
+with DAG('TwoWheeler-Station-Mart-Monitor',
          default_args=default_args,
          schedule_interval='5 * * * *',
          catchup=False
@@ -124,31 +111,21 @@ with DAG('TwoWheeler-Mart-Monitor',
         python_callable=station_mart_last_modified_time,
         provide_context=True)
 
-    has_station_mart_updated = PythonOperator(task_id='has_station_mart_updated',
-                                              python_callable=has_station_mart_updated,
+    push_station_mart_metric = PythonOperator(task_id='push_station_mart_metric',
+                                              python_callable=push_station_mart_metric,
                                               provide_context=True)
-    push_station_mart_updated_metric = PythonOperator(task_id='push_station_mart_updated_metric',
-                                 python_callable=push_station_mart_updated_metric,
-                                 provide_context=True)
-
 
     run_station_id_validator = BashOperator(task_id='run_station_id_validator',
                                           bash_command=run_station_id_validator())
-    read_station_id_metric = PythonOperator(task_id='read_station_id_metric',
-                                          python_callable=read_station_id_metric,
-                                          provide_context=True)
     push_station_id_metric = PythonOperator(task_id='push_station_id_metric',
                                           python_callable=push_station_id_metric,
                                           provide_context=True)
 
-
     run_lat_long_validator = BashOperator(task_id='run_lat_long_validator',
                                       bash_command=run_lat_long_validator())
-    read_lat_long_metric = PythonOperator(task_id='read_lat_long_metric',
-                                              python_callable=read_lat_long_metric,
-                                              provide_context=True)
     push_lat_long_metric = PythonOperator(task_id='push_lat_long_metric',
-                                 python_callable=push_lat_long_metric,
-                                 provide_context=True)
+                                              python_callable=push_lat_long_metric,
+                                              provide_context=True)
 
-    station_mart_last_modified_time >> has_station_mart_updated >> push_station_mart_updated_metric >> run_station_id_validator >>  read_station_id_metric >> push_station_id_metric >> run_lat_long_validator >> read_lat_long_metric >> push_lat_long_metric
+
+    station_mart_last_modified_time >> push_station_mart_metric >> run_station_id_validator >> push_station_id_metric >> run_lat_long_validator >> push_lat_long_metric
