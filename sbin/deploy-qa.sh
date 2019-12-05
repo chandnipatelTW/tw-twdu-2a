@@ -99,8 +99,7 @@ ssh -4 emr-master.twdu-2a-qa.training '
   export hdfs_server="emr-master.twdu-2a-qa.training:8020"  
   export hadoop_path="hadoop"  
   sh /tmp/hdfs-seed.sh
-  pwd
-  scp -rp ./E2ETests emr-master.twdu-2a-qa.training:/tmp/
+  scp -rp E2ETests /tmp/
 '
 
 echo "====HDFS paths configured==="
