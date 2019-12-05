@@ -18,13 +18,13 @@ object StationStatusTransformation {
 
   val log: Logger = getLogger(getClass)
 
-  val sfToStationStatus: String => Seq[StationStatus] = raw_payload => {
+  val sfAndNycToStationStatus: String => Seq[StationStatus] = raw_payload => {
     val json = JSON.parseFull(raw_payload)
     val payload = json.get.asInstanceOf[Map[String, Any]]("payload")
-    extractSFStationStatus(payload)
+    extractSFAndNYCStationStatus(payload)
   }
 
-  private def extractSFStationStatus(payload: Any) = {
+  private def extractSFAndNYCStationStatus(payload: Any) = {
 
     val network: Any = payload.asInstanceOf[Map[String, Any]]("network")
 
@@ -47,19 +47,12 @@ object StationStatusTransformation {
       })
   }
 
-  def sfStationStatusJson2DF(jsonDF: DataFrame, spark: SparkSession): DataFrame = {
-    val toStatusFn: UserDefinedFunction = udf(sfToStationStatus)
+  def sfAndNycStationStatusJson2DF(jsonDF: DataFrame, spark: SparkSession): DataFrame = {
+    val toStatusFn: UserDefinedFunction = udf(sfAndNycToStationStatus)
 
     import spark.implicits._
 
     jsonDF.select(explode(toStatusFn(jsonDF("raw_payload"))) as "status")
-      .select($"status.*")
-  }
-
-  def nycStationStatusJson2DF(jsonDF: DataFrame, spark: SparkSession): DataFrame = {
-    import spark.implicits._
-
-    jsonDF.select(from_json($"raw_payload", ScalaReflection.schemaFor[StationStatus].dataType) as "status")
       .select($"status.*")
   }
 
