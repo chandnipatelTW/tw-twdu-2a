@@ -1,6 +1,7 @@
 defaults: &defaults
     docker:
         - image: circleci/openjdk:8-jdk
+        - image: ryandjf/docker-spark
     working_directory: /home/circleci/project
 
 version: 2
@@ -50,7 +51,6 @@ jobs:
     deploy-qa:
         <<: *defaults
         steps:
-            - setup_remote_docker
             - checkout
             - attach_workspace:
                 at: /home/circleci/project
@@ -59,6 +59,21 @@ jobs:
                     - "67:90:b1:56:75:fa:15:ea:ac:e9:6f:58:d4:d5:51:e0"
             - run:
                 command: ./sbin/deploy-qa.sh
+
+    test:
+        <<: *defaults
+        steps:
+            - checkout
+            - attach_workspace:
+                  at: /home/circleci/project
+            - add_ssh_keys:
+                  fingerprints:
+                      - "67:90:b1:56:75:fa:15:ea:ac:e9:6f:58:d4:d5:51:e0"
+            - run:
+                  command: cd E2ETests/src/test/scala/com/free2wheelers/apps
+            - run:
+                  command: sbt test
+
 
 workflows:
     version: 2
@@ -77,6 +92,11 @@ workflows:
             - deploy-qa:
                 requires:
                     - approve-deploy-qa
+            - test:
+                name: run-test
+                requires:
+                    - deploy-qa
+
             - approve-deploy:
                 type: approval
                 requires: 
