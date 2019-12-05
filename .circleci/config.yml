@@ -50,6 +50,7 @@ jobs:
     deploy-qa:
         <<: *defaults
         steps:
+            - setup_remote_docker
             - checkout
             - attach_workspace:
                 at: /home/circleci/project
