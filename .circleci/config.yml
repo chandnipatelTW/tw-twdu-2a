@@ -65,14 +65,14 @@ jobs:
         steps:
             - checkout
             - attach_workspace:
-                  at: /home/circleci/project/E2ETests/src/test/scala/com/free2wheelers/apps
+                  at: /home/circleci/project
             - add_ssh_keys:
                   fingerprints:
                       - "67:90:b1:56:75:fa:15:ea:ac:e9:6f:58:d4:d5:51:e0"
             - run:
-                  command: pwd
+                  command: ls /home/circleci/project/
             - run:
-                  command: sbt test
+                  command: ./sbin/runE2ETest.sh
 
 
 workflows:
