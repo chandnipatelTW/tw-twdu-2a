@@ -1,6 +1,7 @@
 defaults: &defaults
     docker:
         - image: circleci/openjdk:8-jdk
+        - image: ryandjf/docker-spark
     working_directory: /home/circleci/project
 
 version: 2
@@ -60,6 +61,21 @@ jobs:
             - run:
                 command: ./sbin/deploy-qa.sh
 
+    e2etest:
+        <<: *defaults
+        steps:
+            - checkout
+            - attach_workspace:
+                  at: /home/circleci/project
+            - add_ssh_keys:
+                  fingerprints:
+                      - "67:90:b1:56:75:fa:15:ea:ac:e9:6f:58:d4:d5:51:e0"
+            - run:
+                  command: ls /home/circleci/project/
+            - run:
+                  command: ./sbin/runE2ETest.sh
+
+
 workflows:
     version: 2
     build_and_deploy:
@@ -77,6 +93,10 @@ workflows:
             - deploy-qa:
                 requires:
                     - approve-deploy-qa
+            - e2etest:
+                requires:
+                    - deploy-qa
+
             - approve-deploy:
                 type: approval
                 requires: 
