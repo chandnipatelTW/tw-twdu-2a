@@ -60,16 +60,6 @@ services:
         networks:
           - streaming-data-internal
 
-    station-status-producer:
-        build:
-            context: ../CitibikeApiProducer
-            dockerfile: Dockerfile-station-status
-        depends_on:
-          - kafka
-          - zookeeper-seed
-        networks:
-          - streaming-data-internal
-
     station-san-francisco-producer:
         build:
             context: ../CitibikeApiProducer
@@ -90,31 +80,13 @@ services:
         networks:
           - streaming-data-internal
 
-    raw-station-information-data-saver:
+    raw-station-data_nyc-saver:
         build:
             context: ../RawDataSaver
-            dockerfile: Dockerfile-station-information
+            dockerfile: Dockerfile-station-nyc
         depends_on:
           - kafka
           - station-nyc-producer
-          - station-status-producer
-          - station-san-francisco-producer
-          - hadoop-seed
-          - zookeeper-seed
-        volumes:
-          - ~/.ivy2:/root/.ivy2:rw
-        networks:
-          - streaming-data-internal
-        restart: on-failure
-
-    raw-station-status-data-saver:
-        build:
-            context: ../RawDataSaver
-            dockerfile: Dockerfile-station-status
-        depends_on:
-          - kafka
-          - station-nyc-producer
-          - station-status-producer
           - station-san-francisco-producer
           - hadoop-seed
           - zookeeper-seed
@@ -131,7 +103,6 @@ services:
         depends_on:
           - kafka
           - station-nyc-producer
-          - station-status-producer
           - station-san-francisco-producer
           - hadoop-seed
           - zookeeper-seed
@@ -148,7 +119,6 @@ services:
         depends_on:
           - kafka
           - station-nyc-producer
-          - station-status-producer
           - station-marseille-producer
           - hadoop-seed
           - zookeeper-seed
@@ -164,9 +134,8 @@ services:
         depends_on:
           - zookeeper-seed
           - kafka
-          - station-status-producer
           - station-san-francisco-producer
-          - raw-station-status-data-saver
+          - station-nyc-producer
         volumes:
           - ~/.ivy2:/root/.ivy2:rw
         command: ["./wait-for.sh", "zookeeper:2181", "-t", "30"]
@@ -181,7 +150,6 @@ services:
           - zookeeper-seed
           - hadoop-seed
           - kafka
-          - station-status-producer
           - station-nyc-producer
         volumes:
           - ~/.ivy2:/root/.ivy2:rw
