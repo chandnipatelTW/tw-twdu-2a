@@ -15,10 +15,8 @@ start-slave.sh 127.0.0.1:7077
 
 mkdir -p /tmp/spark-events && start-history-server.sh
 
-mkdir -p /tmp/free2wheelers/rawData/stationInformation/checkpoints
-mkdir -p /tmp/free2wheelers/rawData/stationInformation/data
-mkdir -p /tmp/free2wheelers/rawData/stationStatus/checkpoints
-mkdir -p /tmp/free2wheelers/rawData/stationStatus/data
+mkdir -p /tmp/free2wheelers/rawData/stationDataNYC/checkpoints
+mkdir -p /tmp/free2wheelers/rawData/stationDataNYC/data
 mkdir -p /tmp/free2wheelers/rawData/stationSanFrancisco/checkpoints
 mkdir -p /tmp/free2wheelers/rawData/stationSanFrancisco/data
 mkdir -p /tmp/free2wheelers/stationMart/checkpoints
@@ -29,17 +27,11 @@ mkdir -p /tmp/free2wheelers/stationMart/data
 zk_command="zookeeper-shell.sh 127.0.0.1:2181"
 
 $zk_command create /free2wheelers ''
-$zk_command create /free2wheelers/stationInformation ''
-$zk_command create /free2wheelers/stationInformation/kafkaBrokers 127.0.0.1:9092
-$zk_command create /free2wheelers/stationInformation/topic station_information
-$zk_command create /free2wheelers/stationInformation/checkpointLocation /tmp/free2wheelers/rawData/stationInformation/checkpoints
-$zk_command create /free2wheelers/stationInformation/dataLocation /tmp/free2wheelers/rawData/stationInformation/data
-
-$zk_command create /free2wheelers/stationStatus ''
-$zk_command create /free2wheelers/stationStatus/kafkaBrokers 127.0.0.1:9092
-$zk_command create /free2wheelers/stationStatus/topic station_status
-$zk_command create /free2wheelers/stationStatus/checkpointLocation /tmp/free2wheelers/rawData/stationStatus/checkpoints
-$zk_command create /free2wheelers/stationStatus/dataLocation /tmp/free2wheelers/rawData/stationStatus/data
+$zk_command create /free2wheelers/stationDataNYC ''
+$zk_command create /free2wheelers/stationDataNYC/kafkaBrokers 127.0.0.1:9092
+$zk_command create /free2wheelers/stationDataNYC/topic station_data_nyc
+$zk_command create /free2wheelers/stationDataNYC/checkpointLocation /tmp/free2wheelers/rawData/stationDataNYC/checkpoints
+$zk_command create /free2wheelers/stationDataNYC/dataLocation /tmp/free2wheelers/rawData/stationDataNYC/data
 
 $zk_command create /free2wheelers/stationDataSF ''
 $zk_command create /free2wheelers/stationDataSF/kafkaBrokers 127.0.0.1:9092
