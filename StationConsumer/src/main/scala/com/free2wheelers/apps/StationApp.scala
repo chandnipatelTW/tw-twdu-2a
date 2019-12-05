@@ -23,7 +23,7 @@ object StationApp {
 
     zkClient.start()
 
-    val stationKafkaBrokers = new String(zkClient.getData.forPath("/free2wheelers/stationStatus/kafkaBrokers"))
+    val stationKafkaBrokers = new String(zkClient.getData.forPath("/free2wheelers/stationDataNYC/kafkaBrokers"))
 
     val nycStationTopic = new String(zkClient.getData.watched.forPath("/free2wheelers/stationDataNYC/topic"))
     val sfStationTopic = new String(zkClient.getData.watched.forPath("/free2wheelers/stationDataSF/topic"))
