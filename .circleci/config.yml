@@ -60,7 +60,7 @@ jobs:
             - run:
                 command: ./sbin/deploy-qa.sh
 
-    test:
+    e2etest:
         <<: *defaults
         steps:
             - checkout
@@ -92,8 +92,7 @@ workflows:
             - deploy-qa:
                 requires:
                     - approve-deploy-qa
-            - test:
-                name: run-test
+            - e2etest:
                 requires:
                     - deploy-qa
 
