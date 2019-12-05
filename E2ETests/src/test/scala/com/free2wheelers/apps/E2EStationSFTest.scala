@@ -17,7 +17,7 @@ class E2EStationSFTest extends FeatureSpec with Matchers with GivenWhenThen {
       .master("local")
       .getOrCreate()
 
-    val zookeeperConnectionString = "zookeeper:2181"
+    val zookeeperConnectionString = "kafka.twdu-2a-qa.training:2181"
 
     val retryPolicy = new ExponentialBackoffRetry(1000, 3)
     val zkClient = CuratorFrameworkFactory.newClient(zookeeperConnectionString, retryPolicy)
