@@ -50,10 +50,10 @@ services:
         depends_on:
           - zookeeper
 
-    station-information-producer:
+    station-nyc-producer:
         build:
             context: ../CitibikeApiProducer
-            dockerfile: Dockerfile-station-information
+            dockerfile: Dockerfile-station-nyc
         depends_on:
           - kafka
           - zookeeper-seed
@@ -96,7 +96,7 @@ services:
             dockerfile: Dockerfile-station-information
         depends_on:
           - kafka
-          - station-information-producer
+          - station-nyc-producer
           - station-status-producer
           - station-san-francisco-producer
           - hadoop-seed
@@ -113,7 +113,7 @@ services:
             dockerfile: Dockerfile-station-status
         depends_on:
           - kafka
-          - station-information-producer
+          - station-nyc-producer
           - station-status-producer
           - station-san-francisco-producer
           - hadoop-seed
@@ -130,7 +130,7 @@ services:
             dockerfile: Dockerfile-station-data-SF
         depends_on:
           - kafka
-          - station-information-producer
+          - station-nyc-producer
           - station-status-producer
           - station-san-francisco-producer
           - hadoop-seed
@@ -147,7 +147,7 @@ services:
             dockerfile: Dockerfile-station-data-marseille
         depends_on:
           - kafka
-          - station-information-producer
+          - station-nyc-producer
           - station-status-producer
           - station-marseille-producer
           - hadoop-seed
@@ -182,7 +182,7 @@ services:
           - hadoop-seed
           - kafka
           - station-status-producer
-          - station-information-producer
+          - station-nyc-producer
         volumes:
           - ~/.ivy2:/root/.ivy2:rw
         command: ["./wait-for.sh", "zookeeper:2181", "-t", "30"]
