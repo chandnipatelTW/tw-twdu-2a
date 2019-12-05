@@ -103,7 +103,7 @@ def push_metric(name, value):
 
 with DAG('TwoWheeler-Station-Mart-Monitor',
          default_args=default_args,
-         schedule_interval='5 * * * *',
+         schedule_interval='*/5 * * * *',
          catchup=False
          ) as dag:
     station_mart_last_modified_time = PythonOperator(
