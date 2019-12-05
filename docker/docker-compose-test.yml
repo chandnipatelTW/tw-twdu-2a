@@ -92,7 +92,7 @@ services:
 
     mock-server:
         build:
-          context: ../E2Etests
+          context: ../E2ETests
           dockerfile: Dockerfile-mock-server
         ports:
           - "5001:5001"
