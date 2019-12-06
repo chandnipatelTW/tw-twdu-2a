@@ -93,14 +93,13 @@ echo "====mock server started===="
 
 echo "====Configure HDFS paths===="
 scp ./hdfs/seed.sh emr-master.twdu-2a-qa.training:/tmp/hdfs-seed.sh
+scp -rp ./E2ETests emr-master.twdu-2a-qa.training:/tmp/
 
 ssh -4 emr-master.twdu-2a-qa.training '
   set -e  
   export hdfs_server="emr-master.twdu-2a-qa.training:8020"  
   export hadoop_path="hadoop"  
   sh /tmp/hdfs-seed.sh
-  pwd
-  scp -rp ./E2ETests emr-master.twdu-2a-qa.training:/tmp/
 '
 
 echo "====HDFS paths configured==="
