@@ -26,7 +26,7 @@ class E2EStationSFTest extends FeatureSpec with Matchers with GivenWhenThen {
     scenario("Transform SF station data frame") {
 
       //val outputLocation = new String(zkClient.getData.watched.forPath("/free2wheelers/output/dataLocation"))
-      val outputLocation = "hdfs://free2wheelers/stationMart/data"
+      val outputLocation = "hdfs:///free2wheelers/stationMart/data"
       val outputPath = outputLocation + "/year=2019/month=11/day=28/hour=5/minute=9"
 
       val result = spark.read
